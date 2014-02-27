@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Countdown to 50</title>
+    <link href="style.css" rel="stylesheet" />
+    <audio id="clock" autoplay="true" loop="false">
+      <source src="clock.mp3" type="audio/mp3" />
+      Your browser does not support the audio tag.
+    </audio>
+</head>
+<body>
+    <div role="main">
+        <section id="countdown"></section>
+    </div>
+    <script type="text/javascript">
+        // Used to format into countdown-style
+        String.prototype.format = function() {
+            var formatted = this;
+            for (var i = 0; i < arguments.length; i++) {
+                var regex = new RegExp('\\{'+i+'\\}', 'gi');
+                formatted = formatted.replace(regex, arguments[i]);
+            }
+            return formatted;
+        };
+
+        setInterval(function() {
+            // Update clock
+            var now1 = new Date();
+            var now = now1.valueOf();
+            var tzOff = now1.getTimezoneOffset();
+            var dadBday = Date.parse("December 23, 2013");
+            var span = dadBday - now;
+            var days = Math.floor(span/86400000);
+            var span = (span - (days*86400000));
+            var hours = Math.floor(span/3600000);
+            var span = (span - (hours*3600000));
+            var minutes = Math.floor(span/60000);
+            var span = (span - (minutes*60000));
+            var seconds = Math.floor(span/1000);
+            var span = (span - (seconds*1000));
+            if(seconds%2 == 0){
+                document.getElementById('clock').play();
+            }
+            // Adjusts for DST
+            if((5-(tzOff/60)) > 0){
+                // Must check for 0, so hours don't become negative
+                if(hours > 0){
+                    hours-=(5-(tzOff/60));
+                } 
+                else{
+                    hours = 23; 
+                    days--;
+                }
+            }
+            // IF BIRTHDAY WOO
+            if(days <= 0){
+                document.getElementById('countdown').textContent = "HAPPY BIRTHDAY!";
+            }
+            // Otherwise, act normal
+            else{
+                var time_string = '{0}:{1}:{2}:{3}'.format(pad2(days), pad2(hours), pad2(minutes), pad2(seconds));
+                document.getElementById('countdown').textContent = time_string;
+            }}, 1000);
+
+        // Used to pad each segment to at least two digits
+        function pad2(number) {
+            return (number < 10 ? '0' : '') + number
+        }
+    </script>
+</body>
+</html>
